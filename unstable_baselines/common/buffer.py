@@ -38,7 +38,7 @@ class ReplayBuffer(object):
         self.curr = 0
         self.obs_space =  obs_space
         self.action_space = action_space
-        self.obs_dim = obs_space.shape[0]
+        self.obs_shape = obs_space.shape
         if type(action_space) == gym.spaces.discrete.Discrete:
             self.action_dim = 1
             #action_dim = action_space.n
@@ -47,9 +47,10 @@ class ReplayBuffer(object):
             self.action_dim = action_space.shape[0]
             self.discrete_action = False
         else:
+            print(type(action_space))
             assert 0, "unsupported action type"
-
-        self.obs_buffer = np.zeros((max_buffer_size, self.obs_dim))
+        obs_buffer_shape = [max_buffer_size] + list(self.obs_shape)
+        self.obs_buffer = np.zeros(obs_buffer_shape)
         if self.discrete_action:
             self.action_buffer = np.zeros((max_buffer_size, )).astype(np.long)
         else:

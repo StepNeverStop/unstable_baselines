@@ -5,29 +5,27 @@ default_args = {
   },
   "agent":{
     "gamma": 0.99,
+    "reward_scale": 5.0,
     "update_target_network_interval": 1,
     "target_smoothing_tau": 0.005,
+    "num_q_networks": 10,
+    "num_q_samples": 2,
     "alpha": 0.2,
-    "reward_scale": 1.0,
     "q_network":{
       "hidden_dims": [256,256],
       "optimizer_class": "Adam",
-      "learning_rate":0.0003,
+      "learning_rate":0.001,
       "act_fn": "relu",
       "out_act_fn": "identity"
-    },
-    "opponent_agent":{
-      "type":"random"
     },
     "policy_network":{
       "hidden_dims": [256,256],
       "optimizer_class": "Adam",
+      "deterministic": False,
       "learning_rate":0.0003,
       "act_fn": "relu",
       "out_act_fn": "identity",
-      "re_parameterize": True, 
-      "log_var_min": -20, 
-      "log_var_max": 2
+      "reparameterize": True
     },
     "entropy":{
       "automatic_tuning": True,
@@ -36,16 +34,16 @@ default_args = {
     }
   },
   "trainer":{
-    "agent_idx": 0,
-    "max_env_steps": 3000000,
-    "batch_size": 256,
+    "max_env_steps": 500000,
+    "batch_size": 100,
     "max_trajectory_length":1000,
-    "eval_interval": 10000,
+    "update_policy_interval": 20,
+    "eval_interval": 2000,
     "num_eval_trajectories": 10,
-    "snapshot_interval": 200000,
-    "start_timestep": 2000,
-    "random_policy_timestep": 5000, 
-    "save_video_demo_interval": -1,
-    "log_interval": 1000
+    "save_video_demo_interval": 10000,
+    "warmup_timesteps": 5000,
+    "snapshot_interval": 5000,
+    "log_interval": 200,
+    "utd": 20
   }
 }

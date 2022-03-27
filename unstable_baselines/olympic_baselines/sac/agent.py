@@ -15,10 +15,7 @@ class SACAgent(torch.nn.Module, BaseAgent):
         reward_scale,
         **kwargs):
         super(SACAgent, self).__init__()
-        if len(observation_space) == 1:
-            obs_dim = observation_space.shape[0]
-        else:
-            obs_dim = np.prod(observation_space.shape)
+        obs_dim = observation_space.shape[0]
         action_dim = action_space.shape[0]
 
         #initilize networks

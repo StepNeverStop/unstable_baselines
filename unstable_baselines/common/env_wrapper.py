@@ -1,5 +1,6 @@
 import gym
 import numpy as np
+
 #from mujoco_py import GlfwContext
 #GlfwContext(offscreen=True) 
 
@@ -26,6 +27,9 @@ MUJOCO_META_ENVS = [
     'humanoid-dir', 'hopper-rand-params', 'ant-dir', 
     'cheetah-vel', 'cheetah-dir', 'ant-goal']
 
+OLYMPICS_CURLING = [
+    'olympics-curling'
+    ]
 METAWORLD_ENVS = ['MetaWorld']
 
 ATARI_ENVS = ['']
@@ -39,6 +43,9 @@ def get_env(env_name, **kwargs):
         return MUJOCO_META_ENV_LIB[env_name](**kwargs)
     elif env_name in METAWORLD_ENVS:
         raise NotImplementedError
+    elif env_name in OLYMPICS_CURLING:
+        from unstable_baselines.envs.curling.env.chooseenv import make as make_curling_env
+        return make_curling_env(env_name)
     else:
         print("Env {} not supported".format(env_name))
         exit(0)

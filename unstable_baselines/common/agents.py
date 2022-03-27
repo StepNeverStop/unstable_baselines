@@ -44,7 +44,9 @@ class RandomAgent(BaseAgent):
 
 
     def select_action(self, state, **kwargs):
-        return self.action_space.sample()
+        return{
+            "action":self.action_space.sample()
+        }
 
 
     def select_action(self, state, deterministic=False):

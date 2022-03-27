@@ -16,9 +16,6 @@ default_args = {
       "act_fn": "relu",
       "out_act_fn": "identity"
     },
-    "opponent_agent":{
-      "type":"random"
-    },
     "policy_network":{
       "hidden_dims": [256,256],
       "optimizer_class": "Adam",
@@ -36,7 +33,6 @@ default_args = {
     }
   },
   "trainer":{
-    "agent_idx": 0,
     "max_env_steps": 3000000,
     "batch_size": 256,
     "max_trajectory_length":1000,

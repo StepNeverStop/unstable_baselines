@@ -1,4 +1,3 @@
-from ntpath import join
 import os
 import sys
 # sys.path.append(os.path.join(os.getcwd(), './'))
@@ -8,7 +7,6 @@ import click
 from unstable_baselines.common.logger import Logger
 from unstable_baselines.baselines.sac.trainer import SACTrainer
 from unstable_baselines.baselines.sac.agent import SACAgent
-from unstable_baselines.common.agents import RandomAgent
 from unstable_baselines.common.util import set_device_and_logger, load_config, set_global_seed
 from unstable_baselines.common.buffer import ReplayBuffer
 from unstable_baselines.common.env_wrapper import get_env, ScaleRewardWrapper
@@ -46,33 +44,21 @@ def main(config_path, log_dir, gpu, print_log, seed, info, args):
     logger.log_str("Initializing Environment")
     train_env = get_env(env_name)
     eval_env = get_env(env_name)
-    joint_action_space = train_env.joint_action_space
-    joint_observation_space = train_env.joint_observation_space
-    observation_space = joint_observation_space[0]
-    action_space = joint_action_space[0]
-    print(action_space)
-    print(joint_action_space)
+    state_space = train_env.observation_space
+    action_space = train_env.action_space
 
     #initialize buffer
     logger.log_str("Initializing Buffer")
-    buffer = ReplayBuffer(observation_space, action_space, **args['buffer'])
+    buffer = ReplayBuffer(state_space, action_space, **args['buffer'])
 
     #initialize agent
     logger.log_str("Initializing Agent")
-    agent = SACAgent(observation_space, action_space, **args['agent'])
-    #initialize opponent agent
-    opponent_agent_type = args['common']['opponent_agent']['type']
-    if opponent_agent_type == "random":
-        opponent_agent = RandomAgent(observation_space, action_space, **args['opponent_agent'])
-    elif opponent_agent_type == "delayed":
-        raise NotImplementedError
-    elif opponent_agent_type == "self_play":
-        raise NotImplementedError
+    agent = SACAgent(state_space, action_space, **args['agent'])
+
     #initialize trainer
     logger.log_str("Initializing Trainer")
     trainer  = SACTrainer(
         agent,
-        opponent_agent,
         train_env,
         eval_env,
         buffer,
