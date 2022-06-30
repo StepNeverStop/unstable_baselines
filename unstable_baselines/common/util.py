@@ -6,7 +6,6 @@ import torch
 import numpy as np
 import importlib
 
-
 device = None
 logger = None
 
@@ -28,11 +27,13 @@ def set_device_and_logger(gpu_id, logger_ent):
     print("setting device:", device)
     logger = logger_ent
 
+
 def relative_path_to_module_path(relative_path):
-    path = relative_path.replace(".py", "").replace(os.path.sep,'.')
+    path = relative_path.replace(".py", "").replace(os.path.sep, '.')
     return path
-    
-def load_config(config_path,update_args):
+
+
+def load_config(config_path, update_args):
     default_config_path_elements = config_path.split(os.sep)
     default_config_path_elements[-1] = "default.py"
     default_config_path = os.path.join(*default_config_path_elements)
@@ -43,13 +44,13 @@ def load_config(config_path,update_args):
     assert type(default_args_dict) == dict, "default args file should be default_args=\{...\}"
     assert type(args_dict) == dict, "args file should be default_args=\{...\}"
 
-    #update args is tpule type, convert to dict type
+    # update args is tpule type, convert to dict type
     update_args_dict = {}
     for update_arg in update_args:
         key, val = update_arg.split("=")
         update_args_dict[key] = ast.literal_eval(val)
-    
-    #update env specific args to default 
+
+    # update env specific args to default
     args_dict = merge_dict(default_args_dict, args_dict)
     default_args_dict = update_parameters(default_args_dict, update_args_dict)
     if 'common' in args_dict:
@@ -64,7 +65,7 @@ def merge_dict(source_dict, update_dict, ignored_dict_name=""):
         if key == ignored_dict_name:
             continue
         if key not in source_dict:
-            #print("\033[32m new arg {}: {}\033[0m".format(key, update_dict[key]))
+            # print("\033[32m new arg {}: {}\033[0m".format(key, update_dict[key]))
             source_dict[key] = update_dict[key]
         else:
             if type(update_dict[key]) == dict:
@@ -77,7 +78,7 @@ def merge_dict(source_dict, update_dict, ignored_dict_name=""):
 
 def update_parameters(source_args, update_args):
     print("updating args", update_args)
-    #command line overwriting case, decompose the path and overwrite the args
+    # command line overwriting case, decompose the path and overwrite the args
     for key_path in update_args:
         target_value = update_args[key_path]
         print("key:{}\tvalue:{}".format(key_path, target_value))
@@ -90,15 +91,15 @@ def overwrite_argument_from_path(source_dict, key_path, target_value):
     curr_dict = source_dict
     for key in key_path[:-1]:
         if not key in curr_dict:
-            #illegal path
+            # illegal path
             return source_dict
         curr_dict = curr_dict[key]
-    final_key = key_path[-1] 
+    final_key = key_path[-1]
     curr_dict[final_key] = target_value
     return source_dict
 
 
-def second_to_time_str(remaining:int):
+def second_to_time_str(remaining: int):
     dividers = [86400, 3600, 60, 1]
     names = ['day', 'hour', 'minute', 'second']
     results = []
@@ -108,8 +109,6 @@ def second_to_time_str(remaining:int):
         remaining -= re * d
     time_str = ""
     for re, name in zip(results, names):
-        if re > 0 :
+        if re > 0:
             time_str += "{} {}  ".format(re, name)
     return time_str
-
-
