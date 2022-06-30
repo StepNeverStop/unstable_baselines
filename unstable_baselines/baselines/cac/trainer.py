@@ -1,3 +1,4 @@
+from unstable_baselines.baselines.cac.utils import calculate_smooth_statistics
 from unstable_baselines.common.util import second_to_time_str
 from unstable_baselines.common.trainer import BaseTrainer
 import numpy as np
@@ -74,3 +75,34 @@ class CACTrainer(BaseTrainer):
             log_infos.update(train_agent_log_infos)
 
             self.post_iter(log_infos, tot_env_steps)
+
+    # @torch.no_grad()
+    # def evaluate(self):
+    #     traj_returns = []
+    #     traj_lengths = []
+    #     trajs = []
+    #     for traj_id in range(self.num_eval_trajectories):
+    #         traj = []
+    #         traj_return = 0
+    #         traj_length = 0
+    #         state = self.eval_env.reset()
+    #         for step in range(self.max_trajectory_length):
+    #             action = self.agent.select_action(state, deterministic=True)['action']
+    #             traj.append((state, action))
+    #             next_state, reward, done, _ = self.eval_env.step(action)
+    #             traj_return += reward
+    #             state = next_state
+    #             traj_length += 1
+    #             if done:
+    #                 break
+    #         traj_lengths.append(traj_length)
+    #         traj_returns.append(traj_return)
+    #         trajs.append(traj)
+    #     smooth_statistics_dict = calculate_smooth_statistics(trajs)
+    #
+    #     ret = {
+    #         "performance/eval_return": np.mean(traj_returns),
+    #         "performance/eval_length": np.mean(traj_lengths)
+    #     }
+    #     ret.update(smooth_statistics_dict)
+    #     return ret

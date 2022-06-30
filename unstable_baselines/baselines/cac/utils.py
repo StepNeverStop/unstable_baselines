@@ -1,15 +1,57 @@
 import torch as th
 
-from collections import deque
+from collections import deque, defaultdict
 from copy import deepcopy
 from typing import List
 
 import torch.nn.functional as F
+import numpy as np
 
 
 def th_grads_flatten(loss, model, **kwargs):
     grads = th.autograd.grad(loss, model.parameters(), **kwargs)
     return th.cat([grad.reshape(-1) for grad in grads])
+
+
+def calculate_smooth_statistics(trajs: List[List], interval=20):
+    """
+    trajs: List of traj
+        traj: List of (s, a)
+    """
+    ret_dict = defaultdict(list)
+
+    for traj in trajs:
+        _length = len(traj)
+
+        _actions_list = [_exp[-1] for _exp in traj]
+
+        idxs = np.arange(_length, step=interval)
+        idxs = np.append(idxs, _length)
+        # index from 0 to _length - 1
+
+        abs_diff = []
+        for _i, _j in zip(idxs[:-1], idxs[1:]):
+            acts = _actions_list[_i:_j]
+            _abs_diff = 0.
+            for pre_act, post_act in zip(acts[:-1], acts[1:]):
+                _abs_diff += np.sum(np.abs(pre_act - post_act))
+            abs_diff.append(_abs_diff / (_j - _i))
+
+        _var = np.var(abs_diff)
+
+        acts = _actions_list[0:_length]
+        _abs_diff = 0.
+        for pre_act, post_act in zip(acts[:-1], acts[1:]):
+            _abs_diff += np.sum(np.abs(pre_act - post_act))
+        _tv = _abs_diff / _length
+
+        ret_dict['smooth/smooth_var'].append(_var)
+        ret_dict['smooth/smooth_tv'].append(_tv)
+
+    for k in ret_dict.keys():
+        ret_dict[k] = np.mean(np.asarray(ret_dict[k]))
+
+    return ret_dict
 
 
 class AdaptiveMultiObjective(object):
