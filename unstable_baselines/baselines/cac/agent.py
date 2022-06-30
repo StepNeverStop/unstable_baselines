@@ -61,7 +61,7 @@ class CACAgent(torch.nn.Module, BaseAgent):
                                           kwargs['q_network']['learning_rate'])
         self.policy_optimizer = get_optimizer(kwargs['policy_network']['optimizer_class'], self.policy_network,
                                               kwargs['policy_network']['learning_rate'])
-        self._forward_optimizer = get_optimizer(kwargs['forward_network']['optimizer_class'], self.policy_network,
+        self._forward_optimizer = get_optimizer(kwargs['forward_network']['optimizer_class'], self._forward_net,
                                                 kwargs['forward_network']['learning_rate'])
 
         # entropy
